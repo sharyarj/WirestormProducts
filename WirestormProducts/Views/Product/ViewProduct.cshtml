@@ -1,0 +1,63 @@
+﻿@model WirestormProducts.Models.ProductViewModel
+@{
+    ViewBag.Title = "ViewProduct";
+}
+
+
+<table>
+    <tr>
+        <td style="width: 80px;">Name: </td>
+        <td>@Model.Name</td>
+    </tr>
+    <tr>
+        <td>Description: </td>
+        <td>@Model.Description</td>
+    </tr>
+    <tr>
+        <td>Price: </td>
+        <td>@(Model.Price.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-US")))</td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <b>Comments: </b>
+            <hr />
+            <div id="div_Comments" style="overflow: auto; max-height: 200px;">
+                @{
+                    if (Model.Comments != null)
+                    {
+
+                        foreach (var o in Model.Comments)
+                        {
+                    <div> 
+                        @o.Comment
+                    </div>
+                    <hr />
+                        }
+                    }
+                    else
+                    {
+                    <div>
+                        No comments yet!
+                    </div>
+                    <hr />    
+                    }
+                }
+            </div>
+            <div>
+                <table>
+                    <tr>
+                        <td>Your Comments:</td>
+                        <td>
+                            <textarea id="txt_yourComments" placeholder="Your comments please!" style="width: 254px;"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <input type="button" value="Submit" onclick="@("submitComment('" + Model.ProductID + "',$('#txt_yourComments').val());")" style="float:right;" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </td>
+    </tr>
+</table>

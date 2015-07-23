@@ -1,0 +1,30 @@
+﻿@model WirestormProducts.Models.ProductListModel
+@{
+    ViewBag.Title = "ProductList";
+}
+
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            foreach (var o in Model.List)
+            {
+            <tr>
+                <td>@o.Name</td>
+                <td>@o.Description</td>
+                <td>@(o.Price.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-US")))</td>
+                <td><a href="javascript:void(0);" onclick="showSelectedProduct('@o.ProductID');">View</a></td>
+            </tr>
+            }
+        }
+    </tbody>
+</table>
+ 

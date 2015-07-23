@@ -1,0 +1,139 @@
+﻿@model WirestormProducts.Models.ProductAddUpdateModel
+@{
+    ViewBag.Title = "Products";
+}
+
+
+<div id="div_products"></div> 
+
+<div class="Popup" style="display: none;" id="addproduct_Pop">
+    <div class="popupGrayBg"></div>
+    <div class="popup-box">
+        <div class="section " style="width: 487px;">
+            <div class="pop-header bgblack white">
+                <a href="javascript:void(0);" style="float: right;" class=" pull-right white a-link" onclick="$('.Popup').fadeOut();">X</a>
+                <h4 class="pull-left">Add Product</h4>
+            </div>
+            <div class="pop-content">
+                <div id="EditBox">
+                    @using (Html.BeginForm("", "", FormMethod.Post, new { id = "addForm" }))
+                    {
+                        <table>
+                            <tr>
+                                <td valign="top">Name:</td>
+                                <td>@Html.TextBoxFor(m => m.Name, new { placeholder = "Name", style = "width:300px;" })
+                                    <br />
+                                    <span class="red">@Html.ValidationMessageFor(m => m.Name)</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td valign="top">Description:</td>
+                                <td valign="top">@Html.TextAreaFor(m => m.Description, new { placeholder = "Description", style = "width:300px;" })
+                                    <br />
+                                    <span class="red">@Html.ValidationMessageFor(m => m.Description)</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td valign="top">Price:</td>
+                                <td>$ @Html.TextBoxFor(m => m.Price, new { placeholder = "Price", style = "width:80px;" })
+                                    <br />
+                                    <span class="red">@Html.ValidationMessageFor(m => m.Price)</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <input type="button" value="Submit" onclick="addProductSubmit();" style="float: right;" />
+                                </td>
+                            </tr>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="Popup" style="display: none;" id="viewproduct_Pop">
+    <div class="popupGrayBg"></div>
+    <div class="popup-box">
+        <div class="section " style="width: 487px;">
+            <div class="pop-header bgblack white">
+                <a href="javascript:void(0);" style="float: right;" class=" pull-right white a-link" onclick="$('.Popup').fadeOut();">X</a>
+                <h4 class="pull-left">Product</h4>
+            </div>
+            <div class="pop-content">
+                <div id="EditBox">
+                    <div id="div_ViewProduct">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script type="text/javascript">
+
+
+        function reloadProductList() {
+            $.get("/Product/ProductList/", function (data) {
+                $("#div_products").html(data);
+            });
+        }
+
+        $(document).ready(function () {
+            reloadProductList();
+        });
+
+        function addProductSubmit() {
+            if ($('#addForm').valid()) {
+                $.ajax({
+                    url: '/Product/ProductAdd/',
+                    data: { Name: $('#Name').val(), Description: $('#Description').val(), Price: $('#Price').val() },
+                    type: 'GET',
+                    success: function (data) {
+                        //reload product list
+                        reloadProductList();
+                        $('.Popup').fadeOut();
+                    }
+                });
+            }
+        }
+
+
+        function showSelectedProduct(id) {
+            $.get("/Product/ViewProduct?ProductID=" + id, function (data) {
+                $("#div_ViewProduct").html(data);
+                $('#viewproduct_Pop').show();
+            });
+        }
+
+        function submitComment(id, cmntText) {
+
+            if (parseInt(id) <= 0) {
+                return false;
+            }
+
+            if (!cmntText.trim()) {
+                return false;
+            }
+
+            $.ajax({
+                url: '/Product/CommentAdd/',
+                data: { ProductID: id, CommentText: cmntText },
+                type: 'GET',
+                success: function (data) {
+                    $('#txt_yourComments').val("");
+
+                    $("<div>" + cmntText + "</div><hr/>").appendTo($('#div_Comments'));
+                }
+            });
+        }
+
+
+    </script>
+}
